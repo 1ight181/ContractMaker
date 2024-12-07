@@ -4,8 +4,53 @@ class Config:
     def __init__(self):
         with open("config.ymal") as f:
             config = yaml.safe_load(f)
-        self.directionsOfStudy = config["directionsOfStudy"]
-        self.typesOfPractice = config["typesOfPractice"]
+        try:    
+            self.directionsOfStudy = config["directionsOfStudy"]
+            self.typesOfPractice = config["typesOfPractice"]
+            self.nameOfOrganization = config["nameOfOrganization"]
+            self.isCreateContractForOrganization = config["isCreateContractForOrganization"]
+            self.directionsOfStudyParagraph = config["directionsOfStudyParagraph"]
+            self.typesOfPracticeParagraph = config["typesOfPracticeParagraph"]
+        except:
+            with open("config-backup.ymal", "w") as f:
+                yaml.dump(config ,f, encoding='UTF-8', allow_unicode=True)
+
+            self.directionsOfStudy = []
+            self.typesOfPractice = []
+            self.nameOfOrganization = "Филиал УУНиТ в г.Кумертау"
+            self.isCreateContractForOrganization = True
+            self.directionsOfStudyParagraph = 14
+            self.typesOfPracticeParagraph = 17
+
+            config["directionsOfStudy"] = self.directionsOfStudy
+            config["typesOfPractice"] = self.typesOfPractice
+            config["nameOfOrganization"] = self.nameOfOrganization
+            config["isCreateContractForOrganization"] = self.isCreateContractForOrganization
+            config["directionsOfStudyParagraph"] = self.directionsOfStudyParagraph
+            config["typesOfPracticeParagraph"] = self.typesOfPracticeParagraph
+
+            with open("config.ymal", "w") as f:
+                yaml.dump(config ,f, encoding='UTF-8', allow_unicode=True)
+
+    @staticmethod
+    def changeIsCreateContractForOrganization ():
+        with open("config.ymal") as f:
+            config = yaml.safe_load(f)
+        
+        config["isCreateContractForOrganization"] = not config["isCreateContractForOrganization"]
+
+        with open("config.ymal", "w") as f:
+            yaml.dump(config ,f, encoding='UTF-8', allow_unicode=True)
+    
+    @staticmethod
+    def insertNameOfOrganization(newNameOfOrganization: str):
+        with open("config.ymal") as f:
+            config = yaml.safe_load(f)
+
+        config["nameOfOrganization"] = newNameOfOrganization
+
+        with open("config.ymal", "w") as f:
+            yaml.dump(config ,f, encoding='UTF-8', allow_unicode=True)
 
     @staticmethod
     def insertNewDirectionOfStudyToConfig(newDirectionOfStudy: str):

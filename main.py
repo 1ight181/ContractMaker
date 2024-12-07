@@ -1,10 +1,12 @@
 ﻿import sys
 import mainButtons
 
-from PyQt5 import QtCore, QtGui, QtWidgets
-from settings import SettingsWindow
+from PyQt5 import QtCore, QtWidgets
 from mainUI import Ui_MainWindow
 from config import Config
+
+#именование переменных и функций в CapWords, 
+#так как библиотека PyQt являющаяся основной в проекте использует этот метод именования
 
 class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def __init__(self, initConfig: Config):
@@ -15,20 +17,77 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.comboBoxTypeOfPractice.setPlaceholderText("Не выбрано")
         self.comboBoxDurationOfPractice.setPlaceholderText("Не выбрано")
 
+        self.actionCreateContract.setEnabled(False)
+
+        self.nameOfOrganization = initConfig.nameOfOrganization
+        self.isCreateContractForOrganization = initConfig.isCreateContractForOrganization
+        self.directionsOfStudyParagraph = initConfig.directionsOfStudyParagraph
+        self.typesOfPracticeParagraph = initConfig.typesOfPracticeParagraph
+
         self.comboBoxDirectionOfStudy.addItems(initConfig.directionsOfStudy)
 
         for i in range(0, len(initConfig.typesOfPractice)):
             self.comboBoxTypeOfPractice.addItem(initConfig.typesOfPractice[i]["type"])
             self.comboBoxDurationOfPractice.addItem(initConfig.typesOfPractice[i]["duration"])
 
-        self.pushButtonOpenOrder.clicked.connect(lambda: mainButtons.openOrderButton(self.listNumberOfStudent, self.listNameOfStudent, self.listGroupOfStudent, self.listPlaceOfPractice, self.listHeadOfPractice, self.comboBoxDirectionOfStudy, self.comboBoxTypeOfPractice, self.comboBoxDurationOfPractice, self.pushButtonCreateContract, self.actionCreateContract))
+        self.pushButtonOpenOrder.clicked.connect(lambda: mainButtons.openOrderButton(self.listNumberOfStudent, 
+                                                                                     self.listNameOfStudent, 
+                                                                                     self.listGroupOfStudent, 
+                                                                                     self.listPlaceOfPractice, 
+                                                                                     self.listHeadOfPractice, 
+                                                                                     self.comboBoxDirectionOfStudy, 
+                                                                                     self.comboBoxTypeOfPractice, 
+                                                                                     self.comboBoxDurationOfPractice, 
+                                                                                     self.lineEditNumberOfAuthority,
+                                                                                     self.lineEditDateOfAuthority,
+                                                                                     self.pushButtonCreateContract, 
+                                                                                     self.actionCreateContract,
+                                                                                     self.nameOfOrganization,
+                                                                                     self.isCreateContractForOrganization,
+                                                                                     self.directionsOfStudyParagraph,
+                                                                                     self.typesOfPracticeParagraph
+                                                                                     ))
         
-        self.pushButtonCreateContract.clicked.connect(lambda: mainButtons.saveContractButton(self.listNumberOfStudent, self.listNameOfStudent, self.listGroupOfStudent, self.listPlaceOfPractice, self.listHeadOfPractice, self.comboBoxDirectionOfStudy, self.comboBoxTypeOfPractice, self.comboBoxDurationOfPractice))
+        self.pushButtonCreateContract.clicked.connect(lambda: mainButtons.saveContractButton(self.listNameOfStudent, 
+                                                                                             self.listGroupOfStudent, 
+                                                                                             self.listPlaceOfPractice, 
+                                                                                             self.comboBoxDirectionOfStudy, 
+                                                                                             self.comboBoxTypeOfPractice, 
+                                                                                             self.comboBoxDurationOfPractice,
+                                                                                             self.lineEditNumberOfAuthority,
+                                                                                             self.lineEditDateOfAuthority
+                                                                                             ))
         
-        self.actionOpenSettingsWindow.triggered.connect(lambda: mainButtons.openSettingsWindow(self))
-        self.actionOpenOrder.triggered.connect(lambda: mainButtons.openOrderButton(self.listNumberOfStudent, self.listNameOfStudent, self.listGroupOfStudent, self.listPlaceOfPractice, self.listHeadOfPractice, self.comboBoxDirectionOfStudy, self.comboBoxTypeOfPractice, self.comboBoxDurationOfPractice, self.pushButtonCreateContract, self.actionCreateContract))
-        self.actionCreateContract.triggered.connect(lambda: mainButtons.saveContractButton(self.listNumberOfStudent, self.listNameOfStudent, self.listGroupOfStudent, self.listPlaceOfPractice, self.listHeadOfPractice, self.comboBoxDirectionOfStudy, self.comboBoxTypeOfPractice, self.comboBoxDurationOfPractice))
+        self.actionOpenSettingsWindow.triggered.connect(lambda: mainButtons.openSettingsWindow(self, initConfig))
 
+        self.actionOpenOrder.triggered.connect(lambda: mainButtons.openOrderButton(self.listNumberOfStudent,
+                                                                                   self.listNameOfStudent,
+                                                                                   self.listGroupOfStudent,
+                                                                                   self.listPlaceOfPractice,
+                                                                                   self.listHeadOfPractice,
+                                                                                   self.comboBoxDirectionOfStudy,
+                                                                                   self.comboBoxTypeOfPractice,
+                                                                                   self.comboBoxDurationOfPractice,
+                                                                                   self.lineEditNumberOfAuthority,
+                                                                                   self.lineEditDateOfAuthority,
+                                                                                   self.pushButtonCreateContract,
+                                                                                   self.actionCreateContract,
+                                                                                   self.nameOfOrganization,
+                                                                                   self.isCreateContractForOrganization,
+                                                                                   self.directionsOfStudyParagraph,
+                                                                                   self.typesOfPracticeParagraph
+                                                                                   ))
+        
+        self.actionCreateContract.triggered.connect(lambda: mainButtons.saveContractButton(self.listNameOfStudent, 
+                                                                                           self.listGroupOfStudent, 
+                                                                                           self.listPlaceOfPractice, 
+                                                                                           self.comboBoxDirectionOfStudy, 
+                                                                                           self.comboBoxTypeOfPractice, 
+                                                                                           self.comboBoxDurationOfPractice,
+                                                                                           self.lineEditNumberOfAuthority,
+                                                                                           self.lineEditDateOfAuthority
+                                                                                           ))
+    
         self.show()    
 
 if __name__ == "__main__":

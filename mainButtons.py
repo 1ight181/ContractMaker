@@ -1,14 +1,13 @@
 ﻿from docx import Document
 from docxtpl import DocxTemplate
-from PyQt5.QtWidgets import QListWidget, QPushButton, QComboBox, QFileDialog, QAction
+from PyQt5.QtWidgets import QListWidget, QPushButton, QComboBox, QFileDialog, QAction, QLineEdit
 from settings import SettingsWindow
 from PyQt5 import QtWidgets
 from config import Config
-import re
+import re, datetime
 
 
-def openSettingsWindow(parent: QtWidgets.QMainWindow):
-    initConfig = Config()
+def openSettingsWindow(parent: QtWidgets.QMainWindow, initConfig: Config):
     settingsWindow = SettingsWindow(parent, initConfig)
 
 def getNameOfOrder():
@@ -30,16 +29,27 @@ def getPathToDirContracts():
     return dlg.getExistingDirectory(caption="Выберите папку, где будут созданы договора")
     
 
-def openOrderButton(listNumberOfStudent: QListWidget, listNameOfStudent: QListWidget, listGroupOfStudent: QListWidget, listPlaceOfPractice: QListWidget, listHeadOfPractice: QListWidget, comboBoxDirectionOfStudy:QComboBox, comboBoxTypeOfPractice:QComboBox, comboBoxDurationOfPractice:QComboBox, pushButtonCreateContract: QPushButton, actionCreateContract:QAction):
+def openOrderButton(listNumberOfStudent: QListWidget,
+                    listNameOfStudent: QListWidget, 
+                    listGroupOfStudent: QListWidget, 
+                    listPlaceOfPractice: QListWidget, 
+                    listHeadOfPractice: QListWidget, 
+                    comboBoxDirectionOfStudy:QComboBox, 
+                    comboBoxTypeOfPractice:QComboBox, 
+                    comboBoxDurationOfPractice:QComboBox,
+                    lineEditNumberOfAuthority: QLineEdit,
+                    lineEditDateOfAuthority: QLineEdit,
+                    pushButtonCreateContract: QPushButton, 
+                    actionCreateContract:QAction,
+                    nameOfOrganization: str,
+                    isCreateContractForOrganization: bool,
+                    directionsOfStudyParagraph: int,
+                    typesOfPracticeParagraph: int
+                    ):
+    
     fileName = getNameOfOrder()
     if not fileName:
         return 
-
-    pushButtonCreateContract.setEnabled(True)
-    comboBoxDirectionOfStudy.setEnabled(True)
-    comboBoxTypeOfPractice.setEnabled(True)
-    comboBoxDurationOfPractice.setEnabled(True)
-    actionCreateContract.setEnabled(True)
 
     listNameOfStudent.clear()
     listGroupOfStudent.clear()
@@ -65,12 +75,16 @@ def openOrderButton(listNumberOfStudent: QListWidget, listNameOfStudent: QListWi
         j = i+1
         for j, cell in enumerate(row.cells):
             if i == 0:
-                if cell.text.replace("\n"," ").replace("  ", " ") == "Наименование места прохождения практической подготовки (организационно-правовая форма в аббревиатуре)":
+                if cell.text.replace("\n"," ").replace(r"^(?!.*  ).+", " ") == "Наименование места прохождения практической подготовки (организационно-правовая форма в аббревиатуре)":
                     numberOfCellOfUust = j 
                 continue
-            if row.cells[numberOfCellOfUust].text == "Филиал УУНиТ в г.Кумертау (ФГБУ)":        #строчку в настрйоки
-                continue
-            textOfRowDict[tableOfstudents.rows[0].cells[j].text.replace("\n"," ").replace("  ", " ")] = cell.text
+            row.cells[numberOfCellOfUust].text
+
+            if isCreateContractForOrganization:
+                if row.cells[numberOfCellOfUust].text == nameOfOrganization:        
+                    continue
+
+            textOfRowDict[tableOfstudents.rows[0].cells[j].text.replace("\n"," ").replace('  ', " ")] = cell.text.replace(r"^(?!.*  ).+", " ")
 
         listNameOfStudent.addItem(textOfRowDict.get("Фамилия имя отчество (при наличии) полностью)"))
         listGroupOfStudent.addItem(textOfRowDict.get("Академическая группа"))
@@ -85,24 +99,67 @@ def openOrderButton(listNumberOfStudent: QListWidget, listNameOfStudent: QListWi
     directionsOfStudy = [comboBoxDirectionOfStudy.itemText(i) for i in range(comboBoxDirectionOfStudy.count())]
 
     for direction in directionsOfStudy:
-        if re.search(direction.replace("  ", " "), document.paragraphs[12].text):
+        if re.search(direction.replace(r"^(?!.*  ).+", " "), document.paragraphs[directionsOfStudyParagraph].text + r" "):
             comboBoxDirectionOfStudy.setCurrentText(direction)
 
     typesOfPractice = [comboBoxTypeOfPractice.itemText(i) for i in range(comboBoxTypeOfPractice.count())]
 
     for typeOfPractice in typesOfPractice:
         listOfMatches = [""]
-        listOfMatches += re.findall(typeOfPractice[0:4].lower(), document.paragraphs[15].text) 
+        listOfMatches += re.findall(typeOfPractice[0:4].lower(), document.paragraphs[typesOfPracticeParagraph].text)
 
         if listOfMatches[-1] == typeOfPractice[0:4].lower():
             comboBoxTypeOfPractice.setCurrentText(typeOfPractice)
             comboBoxDurationOfPractice.setCurrentIndex(comboBoxTypeOfPractice.currentIndex())
 
+    pushButtonCreateContract.setEnabled(True)
+    comboBoxDirectionOfStudy.setEnabled(True)
+    comboBoxTypeOfPractice.setEnabled(True)
+    comboBoxDurationOfPractice.setEnabled(True)
+    actionCreateContract.setEnabled(True)
+    lineEditNumberOfAuthority.setEnabled(True)
+    lineEditDateOfAuthority.setEnabled(True)
+
 def iterAllItems(qlist: QListWidget):
     for i in range(qlist.count()):
         yield qlist.item(i).text()
 
-def saveContractButton(listNumberOfStudent: QListWidget, listNameOfStudent: QListWidget, listGroupOfStudent: QListWidget, listPlaceOfPractice: QListWidget, listHeadOfPractice: QListWidget, comboBoxDirectionOfStudy: QComboBox, comboBoxTypeOfPractice: QComboBox, comboBoxDurationOfPractice: QComboBox):
+def saveContractButton (
+                        listNameOfStudent: QListWidget,
+                        listGroupOfStudent: QListWidget, 
+                        listPlaceOfPractice: QListWidget, 
+                        comboBoxDirectionOfStudy: QComboBox, 
+                        comboBoxTypeOfPractice: QComboBox, 
+                        comboBoxDurationOfPractice: QComboBox,
+                        lineEditNumberOfAuthority: QLineEdit,
+                        lineEditDateOfAuthority: QLineEdit
+                        ):
+    if comboBoxDirectionOfStudy.currentText() == "" or comboBoxTypeOfPractice.currentText() == "" or comboBoxDurationOfPractice.currentText() == "":
+        messageBox = QtWidgets.QMessageBox()
+        messageBox.setIcon(QtWidgets.QMessageBox.Icon.Critical)
+        messageBox.setWindowTitle("Ошибка!")
+        messageBox.setText("Откройте приказ снова")
+        messageBox.exec()
+        return
+    
+    if lineEditNumberOfAuthority.text() == "" or lineEditDateOfAuthority.text() == "":
+        messageBox = QtWidgets.QMessageBox()
+        messageBox.setIcon(QtWidgets.QMessageBox.Icon.Critical)
+        messageBox.setWindowTitle("Ошибка!")
+        messageBox.setText("Заполните поле номера и даты корректными значениями")
+        messageBox.exec()
+        return
+
+    try:
+        datetime.datetime.strptime(lineEditDateOfAuthority.text(), "%d.%m.%Y")
+    except ValueError:
+        messageBox = QtWidgets.QMessageBox()
+        messageBox.setIcon(QtWidgets.QMessageBox.Icon.Critical)
+        messageBox.setWindowTitle("Ошибка!")
+        messageBox.setText("Заполните даты корректным значением в формате ДД.ММ.ГГГГ")
+        messageBox.exec()
+        return
+
     newDirName = getPathToDirContracts()
 
     if not newDirName:
@@ -133,7 +190,9 @@ def saveContractButton(listNumberOfStudent: QListWidget, listNameOfStudent: QLis
                             "typeOfPractice": comboBoxTypeOfPractice.currentText(),
                             "course": re.findall(r'\d', listGroupOfStudent.item(1).text())[0],
                             "countOfStudents": len(contextNameOfStudents),
-                            "durationOfPractice": comboBoxDurationOfPractice.currentText()})
+                            "durationOfPractice": comboBoxDurationOfPractice.currentText(),
+                            "numberOfAuthority": lineEditNumberOfAuthority.text(),
+                            "dateOfAuthority": lineEditDateOfAuthority.text()})
             newDocument.save(newDirName.replace("\\", "\\\\") + "/" + place + ".docx")
         except PermissionError:
             messageBox = QtWidgets.QMessageBox()

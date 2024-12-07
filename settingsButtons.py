@@ -1,8 +1,21 @@
 ﻿from PyQt5 import QtWidgets
 from config import  Config
 
+def applyNameOfOrganization(lineEditNameOfOrganization: QtWidgets.QLineEdit,
+                            pushButtonApplyNameOfOrganization: QtWidgets.QPushButton):
+    if lineEditNameOfOrganization.text() == "":
+        messageBox = QtWidgets.QMessageBox()
+        messageBox.setIcon(QtWidgets.QMessageBox.Icon.Critical)
+        messageBox.setWindowTitle("Ошибка!")
+        messageBox.setText("Заполните поле названия")
+        messageBox.exec()
+        return
+    Config.insertNameOfOrganization(lineEditNameOfOrganization.text())
+    pushButtonApplyNameOfOrganization.setEnabled(False)
+
 def deleteDirectionOfStudy(listNameOfDirectionOfStudySettings: QtWidgets.QListWidget):
     currentRow = listNameOfDirectionOfStudySettings.currentRow()
+
 
     Config.deleteDirectionOfStudyFromConfig(listNameOfDirectionOfStudySettings.item(currentRow).text())
 
