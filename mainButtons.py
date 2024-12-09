@@ -1,9 +1,9 @@
 ﻿from docx import Document
 from docxtpl import DocxTemplate
-from PyQt5.QtWidgets import QListWidget, QPushButton, QComboBox, QFileDialog, QAction, QLineEdit
+from PyQt5.QtWidgets import QListWidget, QPushButton, QComboBox, QFileDialog, QAction, QLineEdit, QTextEdit
 from settings import SettingsWindow
-from PyQt5 import QtWidgets
 from config import Config
+from callMessageBox import *
 import re, datetime
 
 
@@ -41,12 +41,16 @@ def openOrderButton(listNumberOfStudent: QListWidget,
                     lineEditDateOfAuthority: QLineEdit,
                     pushButtonCreateContract: QPushButton, 
                     actionCreateContract:QAction,
+                    textEditPeriodOfPractice: QTextEdit,
                     nameOfOrganization: str,
                     isCreateContractForOrganization: bool,
                     directionsOfStudyParagraph: int,
-                    typesOfPracticeParagraph: int
+                    typesOfPracticeParagraph: int,
+                    periodOfPracticeParagraph: int
                     ):
     
+    findSpacesRegEx = re.compile('\s+')
+
     fileName = getNameOfOrder()
     if not fileName:
         return 
@@ -57,6 +61,8 @@ def openOrderButton(listNumberOfStudent: QListWidget,
     listHeadOfPractice.clear()
     listHeadOfPractice.clear()
     listNumberOfStudent.clear()
+    
+    textEditPeriodOfPractice.clear()
 
     comboBoxTypeOfPractice.setCurrentText("Не выбранно")
     comboBoxDurationOfPractice.setCurrentText("Не выбранно")
@@ -75,7 +81,7 @@ def openOrderButton(listNumberOfStudent: QListWidget,
         j = i+1
         for j, cell in enumerate(row.cells):
             if i == 0:
-                if cell.text.replace("\n"," ").replace(r"^(?!.*  ).+", " ") == "Наименование места прохождения практической подготовки (организационно-правовая форма в аббревиатуре)":
+                if re.sub(findSpacesRegEx, " ", cell.text) == "Наименование места прохождения практической подготовки (организационно-правовая форма в аббревиатуре)":
                     numberOfCellOfUust = j 
                 continue
             row.cells[numberOfCellOfUust].text
@@ -84,7 +90,7 @@ def openOrderButton(listNumberOfStudent: QListWidget,
                 if row.cells[numberOfCellOfUust].text == nameOfOrganization:        
                     continue
 
-            textOfRowDict[tableOfstudents.rows[0].cells[j].text.replace("\n"," ").replace('  ', " ")] = cell.text.replace(r"^(?!.*  ).+", " ")
+            textOfRowDict[re.sub(findSpacesRegEx, " ", tableOfstudents.rows[0].cells[j].text)] = re.sub(findSpacesRegEx, " ", cell.text)
 
         listNameOfStudent.addItem(textOfRowDict.get("Фамилия имя отчество (при наличии) полностью)"))
         listGroupOfStudent.addItem(textOfRowDict.get("Академическая группа"))
@@ -99,7 +105,7 @@ def openOrderButton(listNumberOfStudent: QListWidget,
     directionsOfStudy = [comboBoxDirectionOfStudy.itemText(i) for i in range(comboBoxDirectionOfStudy.count())]
 
     for direction in directionsOfStudy:
-        if re.search(direction.replace(r"^(?!.*  ).+", " "), document.paragraphs[directionsOfStudyParagraph].text + r" "):
+        if re.search(re.sub(findSpacesRegEx, " ", direction), document.paragraphs[directionsOfStudyParagraph].text + r" "):
             comboBoxDirectionOfStudy.setCurrentText(direction)
 
     typesOfPractice = [comboBoxTypeOfPractice.itemText(i) for i in range(comboBoxTypeOfPractice.count())]
@@ -111,6 +117,18 @@ def openOrderButton(listNumberOfStudent: QListWidget,
         if listOfMatches[-1] == typeOfPractice[0:4].lower():
             comboBoxTypeOfPractice.setCurrentText(typeOfPractice)
             comboBoxDurationOfPractice.setCurrentIndex(comboBoxTypeOfPractice.currentIndex())
+    
+    listOfMatches = []
+    listOfMatches += re.findall(r"\d{2}\.\d{2}\.\d{4}", document.paragraphs[periodOfPracticeParagraph].text)
+
+    resultString = ""
+
+    i = 0
+    while(i < len(listOfMatches)-1):
+        resultString += listOfMatches[i] + " - " + listOfMatches[i+1] + "<br />"
+        i += 2
+
+    textEditPeriodOfPractice.setHtml(resultString)
 
     pushButtonCreateContract.setEnabled(True)
     comboBoxDirectionOfStudy.setEnabled(True)
@@ -119,6 +137,7 @@ def openOrderButton(listNumberOfStudent: QListWidget,
     actionCreateContract.setEnabled(True)
     lineEditNumberOfAuthority.setEnabled(True)
     lineEditDateOfAuthority.setEnabled(True)
+    textEditPeriodOfPractice.setEnabled(True)
 
 def iterAllItems(qlist: QListWidget):
     for i in range(qlist.count()):
@@ -132,32 +151,27 @@ def saveContractButton (
                         comboBoxTypeOfPractice: QComboBox, 
                         comboBoxDurationOfPractice: QComboBox,
                         lineEditNumberOfAuthority: QLineEdit,
-                        lineEditDateOfAuthority: QLineEdit
+                        lineEditDateOfAuthority: QLineEdit,
+                        textEditPeriodOfPractice: QTextEdit
                         ):
+    
     if comboBoxDirectionOfStudy.currentText() == "" or comboBoxTypeOfPractice.currentText() == "" or comboBoxDurationOfPractice.currentText() == "":
-        messageBox = QtWidgets.QMessageBox()
-        messageBox.setIcon(QtWidgets.QMessageBox.Icon.Critical)
-        messageBox.setWindowTitle("Ошибка!")
-        messageBox.setText("Откройте приказ снова")
-        messageBox.exec()
+        callErrorMessageBox("Откройте приказ снова")
         return
     
     if lineEditNumberOfAuthority.text() == "" or lineEditDateOfAuthority.text() == "":
-        messageBox = QtWidgets.QMessageBox()
-        messageBox.setIcon(QtWidgets.QMessageBox.Icon.Critical)
-        messageBox.setWindowTitle("Ошибка!")
-        messageBox.setText("Заполните поле номера и даты корректными значениями")
-        messageBox.exec()
+        callErrorMessageBox("Заполните поле номера и даты корректными значениями")
         return
 
     try:
         datetime.datetime.strptime(lineEditDateOfAuthority.text(), "%d.%m.%Y")
     except ValueError:
-        messageBox = QtWidgets.QMessageBox()
-        messageBox.setIcon(QtWidgets.QMessageBox.Icon.Critical)
-        messageBox.setWindowTitle("Ошибка!")
-        messageBox.setText("Заполните даты корректным значением в формате ДД.ММ.ГГГГ")
-        messageBox.exec()
+        callErrorMessageBox("Заполните поле даты корректным значением в формате ДД.ММ.ГГГГ")
+        return
+    
+    if re.sub(r"\s*((0?[1-9]|[12][0-9]|3[01])\.(0?[1-9]|1[012])\.\d{4} *-+ *(0?[1-9]|[12][0-9]|3[01])\.(0?[1-9]|1[012])\.\d{4})\,?\s*", "", textEditPeriodOfPractice.toPlainText()) != "":
+        callErrorMessageBox("Заполните поле срока практики корректными значениями в формате ДД.ММ.ГГГГ - ДД.ММ.ГГГГ, " 
+                            + "если периодов несколько отделите их с помощью клавиши ENTER, либо запятой")
         return
 
     newDirName = getPathToDirContracts()
@@ -192,20 +206,15 @@ def saveContractButton (
                             "countOfStudents": len(contextNameOfStudents),
                             "durationOfPractice": comboBoxDurationOfPractice.currentText(),
                             "numberOfAuthority": lineEditNumberOfAuthority.text(),
-                            "dateOfAuthority": lineEditDateOfAuthority.text()})
+                            "dateOfAuthority": lineEditDateOfAuthority.text(),
+                            "periodOfPractice": "\n".join(re.findall(r"\d{2}\.\d{2}\.\d{4} *-+ *\d{2}\.\d{2}\.\d{4}", textEditPeriodOfPractice.toPlainText()))})
             newDocument.save(newDirName.replace("\\", "\\\\") + "/" + place + ".docx")
         except PermissionError:
-            messageBox = QtWidgets.QMessageBox()
-            messageBox.setIcon(QtWidgets.QMessageBox.Icon.Critical)
-            messageBox.setWindowTitle("Ошибка!")
-            messageBox.setText("Закройте открытый договор!")
-            messageBox.exec()  
+            callErrorMessageBox("Закройте открытый договор!")
+            return
             
         contextNameOfStudents = []
         k = 0 
     
-    messageBox = QtWidgets.QMessageBox()
-    messageBox.setIcon(QtWidgets.QMessageBox.Icon.Information)
-    messageBox.setWindowTitle("Готово!")
-    messageBox.setText("Договора находятся в папке, которую вы указали")
-    messageBox.exec()  
+    callInfoMessageBox("Договора находятся в папке, которую вы указали")
+

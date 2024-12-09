@@ -11,6 +11,7 @@ class Config:
             self.isCreateContractForOrganization = config["isCreateContractForOrganization"]
             self.directionsOfStudyParagraph = config["directionsOfStudyParagraph"]
             self.typesOfPracticeParagraph = config["typesOfPracticeParagraph"]
+            self.periodOfPracticeParagraph = config["periodOfPracticeParagraph"]
         except:
             with open("config-backup.ymal", "w") as f:
                 yaml.dump(config ,f, encoding='UTF-8', allow_unicode=True)
@@ -21,6 +22,7 @@ class Config:
             self.isCreateContractForOrganization = True
             self.directionsOfStudyParagraph = 14
             self.typesOfPracticeParagraph = 17
+            self.periodOfPracticeParagraph = 17
 
             config["directionsOfStudy"] = self.directionsOfStudy
             config["typesOfPractice"] = self.typesOfPractice
@@ -28,6 +30,7 @@ class Config:
             config["isCreateContractForOrganization"] = self.isCreateContractForOrganization
             config["directionsOfStudyParagraph"] = self.directionsOfStudyParagraph
             config["typesOfPracticeParagraph"] = self.typesOfPracticeParagraph
+            config["periodOfPracticeParagraph"] = self.periodOfPracticeParagraph
 
             with open("config.ymal", "w") as f:
                 yaml.dump(config ,f, encoding='UTF-8', allow_unicode=True)

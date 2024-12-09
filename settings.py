@@ -1,4 +1,4 @@
-from PyQt5 import QtWidgets, QtCore
+from PyQt5 import QtWidgets
 from settingsUI import Ui_SettingsWindow 
 from config import Config
 

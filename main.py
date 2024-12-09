@@ -23,6 +23,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.isCreateContractForOrganization = initConfig.isCreateContractForOrganization
         self.directionsOfStudyParagraph = initConfig.directionsOfStudyParagraph
         self.typesOfPracticeParagraph = initConfig.typesOfPracticeParagraph
+        self.periodOfPracticeParagraph = initConfig.periodOfPracticeParagraph
 
         self.comboBoxDirectionOfStudy.addItems(initConfig.directionsOfStudy)
 
@@ -42,10 +43,12 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                                                                                      self.lineEditDateOfAuthority,
                                                                                      self.pushButtonCreateContract, 
                                                                                      self.actionCreateContract,
+                                                                                     self.textEditPeriodOfPractice,
                                                                                      self.nameOfOrganization,
                                                                                      self.isCreateContractForOrganization,
                                                                                      self.directionsOfStudyParagraph,
-                                                                                     self.typesOfPracticeParagraph
+                                                                                     self.typesOfPracticeParagraph,
+                                                                                     self.periodOfPracticeParagraph
                                                                                      ))
         
         self.pushButtonCreateContract.clicked.connect(lambda: mainButtons.saveContractButton(self.listNameOfStudent, 
@@ -55,7 +58,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                                                                                              self.comboBoxTypeOfPractice, 
                                                                                              self.comboBoxDurationOfPractice,
                                                                                              self.lineEditNumberOfAuthority,
-                                                                                             self.lineEditDateOfAuthority
+                                                                                             self.lineEditDateOfAuthority,
+                                                                                             self.textEditPeriodOfPractice
                                                                                              ))
         
         self.actionOpenSettingsWindow.triggered.connect(lambda: mainButtons.openSettingsWindow(self, initConfig))
@@ -72,10 +76,12 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                                                                                    self.lineEditDateOfAuthority,
                                                                                    self.pushButtonCreateContract,
                                                                                    self.actionCreateContract,
+                                                                                   self.textEditPeriodOfPractice,
                                                                                    self.nameOfOrganization,
                                                                                    self.isCreateContractForOrganization,
                                                                                    self.directionsOfStudyParagraph,
-                                                                                   self.typesOfPracticeParagraph
+                                                                                   self.typesOfPracticeParagraph,
+                                                                                   self.periodOfPracticeParagraph
                                                                                    ))
         
         self.actionCreateContract.triggered.connect(lambda: mainButtons.saveContractButton(self.listNameOfStudent, 
@@ -85,7 +91,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                                                                                            self.comboBoxTypeOfPractice, 
                                                                                            self.comboBoxDurationOfPractice,
                                                                                            self.lineEditNumberOfAuthority,
-                                                                                           self.lineEditDateOfAuthority
+                                                                                           self.lineEditDateOfAuthority,
+                                                                                           self.textEditPeriodOfPractice
                                                                                            ))
     
         self.show()    
