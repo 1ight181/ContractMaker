@@ -7,8 +7,8 @@ from callMessageBox import *
 import re, datetime
 
 
-def openSettingsWindow(parent: QtWidgets.QMainWindow, initConfig: Config):
-    settingsWindow = SettingsWindow(parent, initConfig)
+def openSettingsWindow(parent: QtWidgets.QMainWindow):
+    settingsWindow = SettingsWindow(parent)
 
 def getNameOfOrder():
     dlg = QFileDialog()

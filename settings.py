@@ -5,11 +5,13 @@ from config import Config
 import settingsButtons
 
 class SettingsWindow(QtWidgets.QMainWindow, Ui_SettingsWindow):
-    def __init__(self, parent: QtWidgets.QMainWindow, initConfig: Config):
+    def __init__(self, parent: QtWidgets.QMainWindow):
         super().__init__(parent)
         self.main = parent
         self.setupUi(self)
         self.setWindowModality(1)
+
+        initConfig = Config()
 
         self.pushButtonApplyNameOfOrganization.setEnabled(initConfig.isCreateContractForOrganization)
 
@@ -21,6 +23,8 @@ class SettingsWindow(QtWidgets.QMainWindow, Ui_SettingsWindow):
         for i in range(0, len(initConfig.typesOfPractice)):
             self.listNameOfTypeOfPracticeSettings.addItem(initConfig.typesOfPractice[i]["type"])
             self.listDurationOfPracticeSettings.addItem(initConfig.typesOfPractice[i]["duration"])
+
+        del initConfig
         
         self.listNameOfDirectionOfStudySettings.itemClicked.connect(lambda: settingsButtons.unlockDeleteDirectionOfStudyButton(self.pushButtonDeleteSelectedDirectionOfStudySettings))
         

@@ -30,6 +30,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         for i in range(0, len(initConfig.typesOfPractice)):
             self.comboBoxTypeOfPractice.addItem(initConfig.typesOfPractice[i]["type"])
             self.comboBoxDurationOfPractice.addItem(initConfig.typesOfPractice[i]["duration"])
+            
+        del initConfig
 
         self.pushButtonOpenOrder.clicked.connect(lambda: mainButtons.openOrderButton(self.listNumberOfStudent, 
                                                                                      self.listNameOfStudent, 
@@ -62,7 +64,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                                                                                              self.textEditPeriodOfPractice
                                                                                              ))
         
-        self.actionOpenSettingsWindow.triggered.connect(lambda: mainButtons.openSettingsWindow(self, initConfig))
+        self.actionOpenSettingsWindow.triggered.connect(lambda: mainButtons.openSettingsWindow(self))
 
         self.actionOpenOrder.triggered.connect(lambda: mainButtons.openOrderButton(self.listNumberOfStudent,
                                                                                    self.listNameOfStudent,
