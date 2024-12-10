@@ -4,7 +4,7 @@
 test/
 order example/
 *.vscode
-*.ymal
+*.yaml
 
 
 # Byte-compiled / optimized / DLL files

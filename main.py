@@ -1,7 +1,7 @@
 ﻿import sys
 import mainButtons
 
-from PyQt5 import QtCore, QtWidgets
+from PyQt5 import QtWidgets
 from mainUI import Ui_MainWindow
 from config import Config
 
@@ -30,7 +30,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         for i in range(0, len(initConfig.typesOfPractice)):
             self.comboBoxTypeOfPractice.addItem(initConfig.typesOfPractice[i]["type"])
             self.comboBoxDurationOfPractice.addItem(initConfig.typesOfPractice[i]["duration"])
-            
+
         del initConfig
 
         self.pushButtonOpenOrder.clicked.connect(lambda: mainButtons.openOrderButton(self.listNumberOfStudent, 

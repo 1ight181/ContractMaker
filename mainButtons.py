@@ -6,6 +6,7 @@ from config import Config
 from callMessageBox import *
 import re, datetime
 
+spacesRegEx = re.compile('\s+')
 
 def openSettingsWindow(parent: QtWidgets.QMainWindow):
     settingsWindow = SettingsWindow(parent)
@@ -49,8 +50,6 @@ def openOrderButton(listNumberOfStudent: QListWidget,
                     periodOfPracticeParagraph: int
                     ):
     
-    findSpacesRegEx = re.compile('\s+')
-
     fileName = getNameOfOrder()
     if not fileName:
         return 
@@ -81,7 +80,7 @@ def openOrderButton(listNumberOfStudent: QListWidget,
         j = i+1
         for j, cell in enumerate(row.cells):
             if i == 0:
-                if re.sub(findSpacesRegEx, " ", cell.text) == "Наименование места прохождения практической подготовки (организационно-правовая форма в аббревиатуре)":
+                if re.sub(spacesRegEx, " ", cell.text) == "Наименование места прохождения практической подготовки (организационно-правовая форма в аббревиатуре)":
                     numberOfCellOfUust = j 
                 continue
             row.cells[numberOfCellOfUust].text
@@ -90,7 +89,7 @@ def openOrderButton(listNumberOfStudent: QListWidget,
                 if row.cells[numberOfCellOfUust].text == nameOfOrganization:        
                     continue
 
-            textOfRowDict[re.sub(findSpacesRegEx, " ", tableOfstudents.rows[0].cells[j].text)] = re.sub(findSpacesRegEx, " ", cell.text)
+            textOfRowDict[re.sub(spacesRegEx, " ", tableOfstudents.rows[0].cells[j].text)] = re.sub(spacesRegEx, " ", cell.text)
 
         listNameOfStudent.addItem(textOfRowDict.get("Фамилия имя отчество (при наличии) полностью)"))
         listGroupOfStudent.addItem(textOfRowDict.get("Академическая группа"))
@@ -105,7 +104,7 @@ def openOrderButton(listNumberOfStudent: QListWidget,
     directionsOfStudy = [comboBoxDirectionOfStudy.itemText(i) for i in range(comboBoxDirectionOfStudy.count())]
 
     for direction in directionsOfStudy:
-        if re.search(re.sub(findSpacesRegEx, " ", direction), document.paragraphs[directionsOfStudyParagraph].text + r" "):
+        if re.search(re.sub(spacesRegEx, " ", direction), document.paragraphs[directionsOfStudyParagraph].text + r" "):
             comboBoxDirectionOfStudy.setCurrentText(direction)
 
     typesOfPractice = [comboBoxTypeOfPractice.itemText(i) for i in range(comboBoxTypeOfPractice.count())]
@@ -159,7 +158,10 @@ def saveContractButton (
         callErrorMessageBox("Откройте приказ снова")
         return
     
-    if lineEditNumberOfAuthority.text() == "" or lineEditDateOfAuthority.text() == "":
+    if lineEditNumberOfAuthority.text() == "" \
+        or re.findall(r"\s{2,}", lineEditNumberOfAuthority.text()) \
+        or lineEditDateOfAuthority.text() == "" \
+        or re.findall(r"\s{2,}", lineEditDateOfAuthority.text()) :
         callErrorMessageBox("Заполните поле номера и даты корректными значениями")
         return
 
@@ -169,7 +171,9 @@ def saveContractButton (
         callErrorMessageBox("Заполните поле даты корректным значением в формате ДД.ММ.ГГГГ")
         return
     
-    if re.sub(r"\s*((0?[1-9]|[12][0-9]|3[01])\.(0?[1-9]|1[012])\.\d{4} *-+ *(0?[1-9]|[12][0-9]|3[01])\.(0?[1-9]|1[012])\.\d{4})\,?\s*", "", textEditPeriodOfPractice.toPlainText()) != "":
+    if re.sub(r"\s*((0?[1-9]|[12][0-9]|3[01])\.(0?[1-9]|1[012])\.\d{4} *-+ *(0?[1-9]|[12][0-9]|3[01])\.(0?[1-9]|1[012])\.\d{4})\,?\s*", 
+              "", 
+              textEditPeriodOfPractice.toPlainText()) != "":
         callErrorMessageBox("Заполните поле срока практики корректными значениями в формате ДД.ММ.ГГГГ - ДД.ММ.ГГГГ, " 
                             + "если периодов несколько отделите их с помощью клавиши ENTER, либо запятой")
         return

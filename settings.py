@@ -30,22 +30,27 @@ class SettingsWindow(QtWidgets.QMainWindow, Ui_SettingsWindow):
         
         self.listNameOfTypeOfPracticeSettings.itemClicked.connect(lambda: settingsButtons.listNameOfTypeOfPracticeSettingsItemClicked(self.listNameOfTypeOfPracticeSettings.currentRow(), 
                                                                                                                                       self.listDurationOfPracticeSettings))
+        
         self.listNameOfTypeOfPracticeSettings.itemClicked.connect(lambda: settingsButtons.unlockDeleteTypeOfPracticeButton(self.pushButtonDeleteSelectedTypeOfPracticeSettings))
 
         self.listDurationOfPracticeSettings.itemClicked.connect(lambda: settingsButtons.listlistDurationOfPracticeSettingsItemClicked(self.listDurationOfPracticeSettings.currentRow(), 
                                                                                                                                       self.listNameOfTypeOfPracticeSettings))
+        
         self.listDurationOfPracticeSettings.itemClicked.connect(lambda: settingsButtons.unlockDeleteTypeOfPracticeButton(self.pushButtonDeleteSelectedTypeOfPracticeSettings))
 
         self.pushButtonDeleteSelectedDirectionOfStudySettings.clicked.connect(lambda: settingsButtons.deleteDirectionOfStudy(self.listNameOfDirectionOfStudySettings))
+
         self.pushButtonAddNewDirectionOfStudySettings.clicked.connect(lambda: settingsButtons.addDirectionOfStudy(self.listNameOfDirectionOfStudySettings, 
                                                                                                                   self.lineEditNameOfNewDirectionOfStudySettings))
         
         self.pushButtonDeleteSelectedTypeOfPracticeSettings.clicked.connect(lambda: settingsButtons.deleteTypeOfPractice(self.listNameOfTypeOfPracticeSettings, 
                                                                                                                          self.listDurationOfPracticeSettings))
+        
         self.pushButtonAddNewTypeOfPracticeSettings.clicked.connect(lambda: settingsButtons.addTypeOfPractice(self.listNameOfTypeOfPracticeSettings, 
                                                                                                               self.listDurationOfPracticeSettings, 
                                                                                                               self.lineEditNameOfNewTypeOfPracticeSettings, 
                                                                                                               self.lineEditNewDurationOfPracticeSettings))
+        
         self.pushButtonApplyNameOfOrganization.clicked.connect(lambda: settingsButtons.applyNameOfOrganization(self.lineEditNameOfOrganization,
                                                                                                                self.pushButtonApplyNameOfOrganization))
         
