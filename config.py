@@ -21,7 +21,7 @@ class Config:
         
             self.directionsOfStudy = []
             self.typesOfPractice = [{"type": "Учебная практика", "duration": '207'}]
-            self.nameOfOrganization = "Филиал УУНиТ в г.Кумертау"
+            self.nameOfOrganization = "(отсутствует)"
             self.isCreateContractForOrganization = True
             self.directionsOfStudyParagraph = 14
             self.typesOfPracticeParagraph = 17
