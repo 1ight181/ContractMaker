@@ -1,0 +1,14 @@
+﻿directionsOfStudy:
+- 24.05.06 Системы управления летательными аппаратами
+directionsOfStudyParagraph: 14
+isCreateContractForOrganization: true
+nameOfOrganization: (отсутствует)
+periodOfPracticeParagraph: 17
+typesOfPractice:
+- duration: '207'
+  type: Учебная практика
+- duration: '207'
+  type: Производственная практика
+- duration: '315'
+  type: Дипломная практика
+typesOfPracticeParagraph: 17
