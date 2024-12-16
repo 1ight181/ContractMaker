@@ -81,19 +81,22 @@ def openOrderButton(listNumberOfStudent: QListWidget,
         for j, cell in enumerate(row.cells):
             if i == 0:
                 if re.sub(spacesRegEx, " ", cell.text) == "Наименование места прохождения практической подготовки (организационно-правовая форма в аббревиатуре)":
-                    numberOfCellOfUust = j 
+                    numberOfCellOfSelfName = j 
                 continue
-            row.cells[numberOfCellOfUust].text
+            row.cells[numberOfCellOfSelfName].text
 
             if isCreateContractForOrganization:
-                if row.cells[numberOfCellOfUust].text == nameOfOrganization:        
+                if row.cells[numberOfCellOfSelfName].text == nameOfOrganization:        
                     continue
 
-            textOfRowDict[re.sub(spacesRegEx, " ", tableOfstudents.rows[0].cells[j].text)] = re.sub(spacesRegEx, " ", cell.text)
+            textOfRowDict[re.sub(spacesRegEx, " ", tableOfstudents.rows[0].cells[j].text)] = re.sub(r"\s+$", "", re.sub(spacesRegEx, " ", cell.text))
+
+        if textOfRowDict.get("Наименование места прохождения практической подготовки (организационно-правовая форма в аббревиатуре)") == None:
+            continue
 
         listNameOfStudent.addItem(textOfRowDict.get("Фамилия имя отчество (при наличии) полностью)"))
         listGroupOfStudent.addItem(textOfRowDict.get("Академическая группа"))
-        listPlaceOfPractice.addItem(textOfRowDict.get("Наименование места прохождения практической подготовки (организационно-правовая форма в аббревиатуре)"))
+        listPlaceOfPractice.addItem(re.sub("\"", "«", textOfRowDict.get("Наименование места прохождения практической подготовки (организационно-правовая форма в аббревиатуре)")))
         listHeadOfPractice.addItem(textOfRowDict.get("Руководитель практики (должность, фамилия имя отчество (при наличии) полностью)"))
         textOfRowDict.clear()
     

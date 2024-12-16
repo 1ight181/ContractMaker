@@ -4,13 +4,15 @@ from callMessageBox import callErrorMessageBox
 import re
 
 findSpacesRegEx = re.compile('\s+')
+findEndSpacesRegEx = re.compile('\s+$')
 
 def applyNameOfOrganization(lineEditNameOfOrganization: QtWidgets.QLineEdit,
                             pushButtonApplyNameOfOrganization: QtWidgets.QPushButton):
-    if lineEditNameOfOrganization.text() == "" or re.match(r"\s+", lineEditNameOfOrganization.text()):
+    if lineEditNameOfOrganization.text() == "" or re.match(findSpacesRegEx, lineEditNameOfOrganization.text()):
         callErrorMessageBox("Заполните поле названия. Название не может начинаться с пробела.")
         return
-    re.sub(findSpacesRegEx, " ", Config.insertNameOfOrganization(lineEditNameOfOrganization.text()))
+    lineEditNameOfOrganization.setText(re.sub(findEndSpacesRegEx, "", re.sub(findSpacesRegEx, " ", lineEditNameOfOrganization.text())))
+    Config.insertNameOfOrganization(lineEditNameOfOrganization.text())
     pushButtonApplyNameOfOrganization.setEnabled(False)
 
 def deleteDirectionOfStudy(listNameOfDirectionOfStudySettings: QtWidgets.QListWidget):
@@ -24,11 +26,11 @@ def deleteDirectionOfStudy(listNameOfDirectionOfStudySettings: QtWidgets.QListWi
       
 def addDirectionOfStudy(listNameOfDirectionOfStudySettings: QtWidgets.QListWidget, 
                         lineEditNameOfNewDirectionOfStudySettings: QtWidgets.QLineEdit):
-    if lineEditNameOfNewDirectionOfStudySettings.text() == "" or re.match(r"\s+", lineEditNameOfNewDirectionOfStudySettings.text()):
+    if lineEditNameOfNewDirectionOfStudySettings.text() == "" or re.match(findEndSpacesRegEx, lineEditNameOfNewDirectionOfStudySettings.text()):
         callErrorMessageBox("Заполните поле названия. Название не может начинаться с пробела.")
         return
 
-    item = re.sub(findSpacesRegEx, " ", lineEditNameOfNewDirectionOfStudySettings.text())
+    item = re.sub(findEndSpacesRegEx, "", re.sub(findSpacesRegEx, " ", lineEditNameOfNewDirectionOfStudySettings.text()))
 
     listNameOfDirectionOfStudySettings.addItem(item)
 
@@ -53,15 +55,15 @@ def addTypeOfPractice(listNameOfTypeOfPracticeSettings: QtWidgets.QListWidget,
                       lineEditNameOfNewTypeOfPracticeSettings: QtWidgets.QLineEdit, 
                       lineEditNewDurationOfPracticeSettings: QtWidgets.QLineEdit ):
     if lineEditNameOfNewTypeOfPracticeSettings.text() == "" \
-        or re.match(r"\s+", lineEditNameOfNewTypeOfPracticeSettings.text())  \
+        or re.match(findSpacesRegEx, lineEditNameOfNewTypeOfPracticeSettings.text())  \
         or lineEditNewDurationOfPracticeSettings.text() == ""  \
-        or re.match(r"\s+", lineEditNewDurationOfPracticeSettings.text()):
+        or re.match(findSpacesRegEx, lineEditNewDurationOfPracticeSettings.text()):
 
         callErrorMessageBox("Заполните поля названия и часов! Название и значение часов не может начинаться с пробела.")
         return
     
-    itemTypeOfPractice = re.sub(findSpacesRegEx, " ", lineEditNameOfNewTypeOfPracticeSettings.text())
-    itemDurationOfPractice = re.sub(findSpacesRegEx, " ", lineEditNewDurationOfPracticeSettings.text())
+    itemTypeOfPractice = re.sub(findEndSpacesRegEx, "", re.sub(findSpacesRegEx, " ", lineEditNameOfNewTypeOfPracticeSettings.text()))
+    itemDurationOfPractice = re.sub(findEndSpacesRegEx, "", re.sub(findSpacesRegEx, " ", lineEditNewDurationOfPracticeSettings.text()))
 
     listNameOfTypeOfPracticeSettings.addItem(itemTypeOfPractice)
     listDurationOfPracticeSettings.addItem(itemDurationOfPractice)

@@ -1,7 +1,7 @@
-﻿directionsOfStudy:
-- 24.05.06 Системы управления летательными аппаратами
+directionsOfStudy:
+- 09.04.03. Прикладная информатика
 directionsOfStudyParagraph: 14
-isCreateContractForOrganization: true
+isCreateContractForOrganization: false
 nameOfOrganization: (отсутствует)
 periodOfPracticeParagraph: 17
 typesOfPractice:
